@@ -1,0 +1,10 @@
+@hostname = localhost 
+@port = 9000 
+@host = {{hostname}}:{{port}} 
+@version = v1
+@entity = test 
+@contentType = application/json
+
+### 
+GET http://{{host}}/api/{{version}}/{{entity}} HTTP/1.1
+
