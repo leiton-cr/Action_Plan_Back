@@ -1,18 +1,13 @@
-import { Request, Response } from "express";
 import BaseController from "../core/BaseController";
+import { TestModel } from "../models/TestModel";
 
-export default class TestController extends BaseController {
+import TestService from "../service/TestService";
 
+export default class TestController extends BaseController<TestModel> {
 
   constructor() {
     super();
-
+    this.service = new TestService()
   }
 
-  /**
-   *
-   */
-  public getTest = async (req: Request, res: Response) => {
-    res.status(200).json("Success");
-  };
 }

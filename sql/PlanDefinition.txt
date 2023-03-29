@@ -1,0 +1,111 @@
+DROP TABLE IF EXISTS tbl_plans;
+
+CREATE TABLE tbl_plans (
+    id varchar(37) PRIMARY KEY,
+    company INT,
+    project varchar(37),
+    manager INT,
+    goal TEXT,
+    issue TEXT,
+    outcome TEXT,
+    FOREIGN KEY (company) REFERENCES tbl_companies(id),
+    FOREIGN KEY (manager) REFERENCES tbl_people(id)
+);
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_plans_create`(
+	IN _id varchar(37),
+	IN _company INT,
+	IN _project varchar(37),
+	IN _manager INT,
+	IN _goal TEXT,
+	IN _issue TEXT,
+	IN _outcome TEXT
+)
+BEGIN
+	INSERT INTO tbl_plans (id ,company ,project ,manager ,goal ,issue ,outcome)
+    VALUES (_id ,_company ,_project ,_manager ,_goal ,_issue ,_outcome);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_delete;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_plans_delete`(
+	IN _id varchar(37)
+)
+BEGIN
+	DELETE
+ 	FROM tbl_plans
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_plans_getAll`()
+BEGIN
+	SELECT id, status
+ 	FROM tbl_plans;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_getById ;
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_plans_getById`(
+	IN _id varchar(37)
+)
+BEGIN
+	SELECT id, status
+ 	FROM tbl_plans
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_update;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_plans_update`(
+	IN _id varchar(37),
+	IN _company INT,
+	IN _project varchar(37),
+	IN _manager INT,
+	IN _goal TEXT,
+	IN _issue TEXT,
+	IN _outcome TEXT
+)
+BEGIN
+	UPDATE tbl_plans
+	SET id =_id, 
+	company = _company, 
+	project = _project, 
+	manager = _manager,
+	goal = _goal,
+	issue = _issue,
+	outcome = _outcome
+	WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------

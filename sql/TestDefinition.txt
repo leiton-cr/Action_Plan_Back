@@ -1,0 +1,98 @@
+DROP TABLE IF EXISTS tbl_tests;
+
+CREATE TABLE tbl_tests (
+    id varchar(37) PRIMARY KEY,
+    status varchar(20)
+);
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_tests_create`(
+	IN _id varchar(37), IN _status varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_tests (id, status) 
+    VALUES (_id, _status);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_delete;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tests_delete`(
+	IN _id varchar(37)
+)
+BEGIN
+	DELETE
+ 	FROM tbl_tests
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tests_getAll`()
+BEGIN
+	SELECT id, status
+ 	FROM tbl_tests;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_getById ;
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_tests_getById`(
+	IN _id varchar(37)
+)
+BEGIN
+	SELECT id, status
+ 	FROM tbl_tests
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_update;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tests_update`(
+	IN _id varchar(37), IN _status varchar(37)
+)
+BEGIN
+	UPDATE tbl_tests
+	SET status = _status
+	WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+CALL sp_tests_create("3b08b6d9-fc2b-4e6e-8061-7f666f7c404c", "Success");
+#-------------------------------------------------------------
+CALL sp_tests_getAll();
+#-------------------------------------------------------------
+CALL sp_tests_getByID('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c');
+#-------------------------------------------------------------
+CALL sp_tests_update('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c', "To-Do");
+#-------------------------------------------------------------
+CALL sp_tests_delete("3b08b6d9-fc2b-4e6e-8061-7f666f7c404c");

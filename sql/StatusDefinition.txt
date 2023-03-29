@@ -1,0 +1,44 @@
+DROP TABLE IF EXISTS tbl_statuses;
+
+CREATE TABLE tbl_statuses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    status varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_statuses_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_statuses_create`(
+	IN _status varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_statuses (status) 
+    VALUES (_status);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_statuses_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statuses_getAll`()
+BEGIN
+	SELECT id, status
+ 	FROM tbl_statuses;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_statuses_create("To do");
+CALL sp_statuses_create("In process");
+CALL sp_statuses_create("Blocked");
+CALL sp_statuses_create("Done");
+#-------------------------------------------------------------
+CALL sp_statuses_getAll();
+#-------------------------------------------------------------

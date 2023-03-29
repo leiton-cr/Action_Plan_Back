@@ -4,21 +4,26 @@ import express, { Application } from "express";
 import cors from "cors";
 import morgan from "morgan";
 
-import swaggerDocs from "../routes/swagger";
 import TestRouter from "../routes/v1/TestRouter";
+import swaggerDocs from "../routes/swagger";
+import PlanRouter from "../routes/v1/PlanRouter";
+import BaseRouter from "../core/BaseRouter";
 
 export default class Server {
     private app: Application;
     private port: number;
 
-    private testRoutes: TestRouter;
+    private routers: Array<BaseRouter> ;
 
     constructor() {
         this.port = parseInt(process.env.PORT || "");
         this.app = express();
         this.middlewares();
 
-        this.testRoutes = new TestRouter();
+        this.routers = [
+            new TestRouter(),
+            new PlanRouter()
+        ]
 
         this.routes();
     }
@@ -36,7 +41,9 @@ export default class Server {
      * This method allows to set the routes
      */
     private routes() {
-        this.app.use("/api/v1/test", this.testRoutes.getRouter());
+        this.routers.map(router =>{
+            this.app.use(router.getRoute(), router.getRouter());
+        })
     }
 
     /**

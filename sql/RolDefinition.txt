@@ -1,0 +1,43 @@
+DROP TABLE IF EXISTS tbl_roles;
+
+CREATE TABLE tbl_roles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_roles_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_roles_create`(
+	IN _role varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_roles (role) 
+    VALUES (_role);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_roles_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_roles_getAll`()
+BEGIN
+	SELECT id, role
+ 	FROM tbl_roles;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_roles_create("Stakeholder");
+CALL sp_roles_create("Project Manager");
+CALL sp_roles_create("Collaborator");
+#-------------------------------------------------------------
+CALL sp_roles_getAll();
+#-------------------------------------------------------------

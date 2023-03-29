@@ -1,0 +1,555 @@
+DROP TABLE IF EXISTS tbl_companies;
+
+CREATE TABLE tbl_companies (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    company varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_companies_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_companies_create`(
+	IN _company varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_companies (company) 
+    VALUES (_company);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_companies_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_companies_getAll`()
+BEGIN
+	SELECT id, company
+ 	FROM tbl_companies;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_companies_create("Facebook");
+CALL sp_companies_create("Samsung");
+CALL sp_companies_create("Asus");
+CALL sp_companies_create("Other");
+#-------------------------------------------------------------
+CALL sp_companies_getAll();
+#-------------------------------------------------------------
+DROP TABLE IF EXISTS tbl_priorities;
+
+CREATE TABLE tbl_priorities (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    priority varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_priorities_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_priorities_create`(
+	IN _priority varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_priorities (priority) 
+    VALUES (_priority);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_priorities_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_priorities_getAll`()
+BEGIN
+	SELECT id, priority
+ 	FROM tbl_priorities;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_priorities_create("Low");
+CALL sp_priorities_create("Mid");
+CALL sp_priorities_create("High");
+CALL sp_priorities_create("Urgent");
+#-------------------------------------------------------------
+CALL sp_priorities_getAll();
+#-------------------------------------------------------------
+DROP TABLE IF EXISTS tbl_roles;
+
+CREATE TABLE tbl_roles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_roles_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_roles_create`(
+	IN _role varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_roles (role) 
+    VALUES (_role);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_roles_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_roles_getAll`()
+BEGIN
+	SELECT id, role
+ 	FROM tbl_roles;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_roles_create("Stakeholder");
+CALL sp_roles_create("Project Manager");
+CALL sp_roles_create("Collaborator");
+#-------------------------------------------------------------
+CALL sp_roles_getAll();
+#-------------------------------------------------------------
+DROP TABLE IF EXISTS tbl_people;
+
+CREATE TABLE tbl_people (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name varchar(20) NOT NULL,
+    rol INT NOT NULL,
+    FOREIGN KEY (rol) REFERENCES tbl_roles(id)
+) AUTO_INCREMENT=10000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_person_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_person_create`(
+	IN _name varchar(37), IN _rol INT
+)
+BEGIN
+	INSERT INTO tbl_people (name, rol) 
+    VALUES (_name, _rol);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_person_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_person_getAll`()
+BEGIN
+	SELECT id, name, rol
+ 	FROM tbl_people;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_person_getByRol;
+DELIMITER //
+
+CREATE PROCEDURE `sp_person_getByRol`(
+	IN _rol INT
+)
+BEGIN
+	SELECT id, name, rol
+ 	FROM tbl_people
+ 	WHERE id = _rol;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+CALL sp_person_create("James", 1001);
+CALL sp_person_create("Jhon", 1002);
+CALL sp_person_create("Joe", 1000);
+CALL sp_person_create("Adam", 1000);
+#-------------------------------------------------------------
+CALL sp_person_getAll();
+#-------------------------------------------------------------
+
+DROP TABLE IF EXISTS tbl_plans;
+
+CREATE TABLE tbl_plans (
+    id varchar(37) PRIMARY KEY,
+    company INT,
+    project varchar(37),
+    manager INT,
+    goal TEXT,
+    issue TEXT,
+    outcome TEXT,
+    FOREIGN KEY (company) REFERENCES tbl_companies(id),
+    FOREIGN KEY (manager) REFERENCES tbl_people(id)
+);
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_plans_create`(
+	IN _id varchar(37),
+	IN _company INT,
+	IN _project varchar(37),
+	IN _manager INT,
+	IN _goal TEXT,
+	IN _issue TEXT,
+	IN _outcome TEXT
+)
+BEGIN
+	INSERT INTO tbl_plans (id ,company ,project ,manager ,goal ,issue ,outcome)
+    VALUES (_id ,_company ,_project ,_manager ,_goal ,_issue ,_outcome);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_delete;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_plans_delete`(
+	IN _id varchar(37)
+)
+BEGIN
+	DELETE
+ 	FROM tbl_plans
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_plans_getAll`()
+BEGIN
+	SELECT id, status
+ 	FROM tbl_plans;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_getById ;
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_plans_getById`(
+	IN _id varchar(37)
+)
+BEGIN
+	SELECT id, status
+ 	FROM tbl_plans
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_plans_update;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_plans_update`(
+	IN _id varchar(37),
+	IN _company INT,
+	IN _project varchar(37),
+	IN _manager INT,
+	IN _goal TEXT,
+	IN _issue TEXT,
+	IN _outcome TEXT
+)
+BEGIN
+	UPDATE tbl_plans
+	SET id =_id, 
+	company = _company, 
+	project = _project, 
+	manager = _manager,
+	goal = _goal,
+	issue = _issue,
+	outcome = _outcome
+	WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+DROP TABLE IF EXISTS tbl_details;
+
+CREATE TABLE tbl_details (
+    id varchar(37),    
+    plan varchar(37) ,
+    task varchar(37),
+    responsible INT,
+    priority INT,
+    status INT,
+    start INT,
+    end INT,
+    resources varchar(37),
+    blockers varchar(37),
+    stakeholder INT,
+    milestone varchar(37),
+    notes varchar(37),
+
+  	PRIMARY KEY (id, plan),
+    FOREIGN KEY (responsible) REFERENCES tbl_people(id),
+    FOREIGN KEY (priority) REFERENCES tbl_priorities(id),
+    FOREIGN KEY (status) REFERENCES tbl_statuses(id),
+    FOREIGN KEY (stakeholder) REFERENCES tbl_people(id),
+    FOREIGN KEY (plan) REFERENCES tbl_plans(id)
+    
+);
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_details_create`(
+	IN _id varchar(37),
+	IN _task varchar(37),
+	IN _responsible INT,
+	IN _priority INT,
+	IN _status INT,
+	IN _start INT,
+	IN _end INT,
+	IN _resources varchar(37),
+	IN _blockers varchar(37),
+	IN _stakeholder INT,
+	IN _milestone varchar(37),
+	IN _notes varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_details (id , task ,responsible ,priority ,status ,start ,end ,resources ,blockers ,stakeholder ,milestone ,notes)
+   	VALUES (_id, _task, _responsible, _priority, _status, _start, _end, _resources, _blockers, _stakeholder, _milestone,_notes);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_delete;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_details_delete`(
+	IN _id varchar(37)
+)
+BEGIN
+	DELETE
+ 	FROM tbl_details
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_details_getAll`()
+BEGIN
+	SELECT id, task, responsible, priority, status, start, end, resources, blockers, stakeholder, milestone, notes
+ 	FROM tbl_details;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_getById ;
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_details_getById`(
+	IN _id varchar(37)
+)
+BEGIN
+	SELECT id, task, responsible, priority, status, start, end, resources, blockers, stakeholder, milestone, notes
+ 	FROM tbl_details
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_update;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_details_update`(
+	IN _id varchar(37),
+	IN _task varchar(37),
+	IN _responsible INT,
+	IN _priority INT,
+	IN _status INT,
+	IN _start INT,
+	IN _end INT,
+	IN _resources varchar(37),
+	IN _blockers varchar(37),
+	IN _stakeholder INT,
+	IN _milestone varchar(37),
+	IN _notes varchar(37)
+)
+BEGIN
+	UPDATE tbl_details
+	SET id = _id,
+	 task = _task,
+	 responsible = _responsible,
+	 priority = _priority,
+	 status = _status,
+	 start = _start,
+	 end = _end,
+	 resources = _resources,
+	 blockers = _blockers,
+	 stakeholder = _stakeholder,
+	 milestone = _milestone, 
+	 notes = _notes
+	WHERE id = _id;
+END//
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+DROP TABLE IF EXISTS tbl_tests;
+
+CREATE TABLE tbl_tests (
+    id varchar(37) PRIMARY KEY,
+    status varchar(20)
+);
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_tests_create`(
+	IN _id varchar(37), IN _status varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_tests (id, status) 
+    VALUES (_id, _status);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_delete;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tests_delete`(
+	IN _id varchar(37)
+)
+BEGIN
+	DELETE
+ 	FROM tbl_tests
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_tests_getAll`()
+BEGIN
+	SELECT id, status
+ 	FROM tbl_tests;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_getById ;
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_tests_getById`(
+	IN _id varchar(37)
+)
+BEGIN
+	SELECT id, status
+ 	FROM tbl_tests
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_tests_update;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tests_update`(
+	IN _id varchar(37), IN _status varchar(37)
+)
+BEGIN
+	UPDATE tbl_tests
+	SET status = _status
+	WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+CALL sp_tests_create("3b08b6d9-fc2b-4e6e-8061-7f666f7c404c", "Success");
+#-------------------------------------------------------------
+CALL sp_tests_getAll();
+#-------------------------------------------------------------
+CALL sp_tests_getByID('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c');
+#-------------------------------------------------------------
+CALL sp_tests_update('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c', "To-Do");
+#-------------------------------------------------------------
+CALL sp_tests_delete("3b08b6d9-fc2b-4e6e-8061-7f666f7c404c");
+
+

@@ -1,0 +1,44 @@
+DROP TABLE IF EXISTS tbl_companies;
+
+CREATE TABLE tbl_companies (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    company varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_companies_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_companies_create`(
+	IN _company varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_companies (company) 
+    VALUES (_company);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_companies_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_companies_getAll`()
+BEGIN
+	SELECT id, company
+ 	FROM tbl_companies;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_companies_create("Facebook");
+CALL sp_companies_create("Samsung");
+CALL sp_companies_create("Asus");
+CALL sp_companies_create("Other");
+#-------------------------------------------------------------
+CALL sp_companies_getAll();
+#-------------------------------------------------------------

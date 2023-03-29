@@ -1,0 +1,44 @@
+DROP TABLE IF EXISTS tbl_priorities;
+
+CREATE TABLE tbl_priorities (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    priority varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_priorities_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_priorities_create`(
+	IN _priority varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_priorities (priority) 
+    VALUES (_priority);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_priorities_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_priorities_getAll`()
+BEGIN
+	SELECT id, priority
+ 	FROM tbl_priorities;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_priorities_create("Low");
+CALL sp_priorities_create("Mid");
+CALL sp_priorities_create("High");
+CALL sp_priorities_create("Urgent");
+#-------------------------------------------------------------
+CALL sp_priorities_getAll();
+#-------------------------------------------------------------

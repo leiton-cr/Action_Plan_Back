@@ -1,0 +1,61 @@
+DROP TABLE IF EXISTS tbl_people;
+
+CREATE TABLE tbl_people (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name varchar(20) NOT NULL,
+    rol INT NOT NULL,
+    FOREIGN KEY (rol) REFERENCES tbl_roles(id)
+) AUTO_INCREMENT=10000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_person_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_person_create`(
+	IN _name varchar(37), IN _rol INT
+)
+BEGIN
+	INSERT INTO tbl_people (name, rol) 
+    VALUES (_name, _rol);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_person_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_person_getAll`()
+BEGIN
+	SELECT id, name, rol
+ 	FROM tbl_people;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_person_getByRol;
+DELIMITER //
+
+CREATE PROCEDURE `sp_person_getByRol`(
+	IN _rol INT
+)
+BEGIN
+	SELECT id, name, rol
+ 	FROM tbl_people
+ 	WHERE id = _rol;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+CALL sp_person_create("James", 1001);
+CALL sp_person_create("Jhon", 1002);
+CALL sp_person_create("Joe", 1000);
+CALL sp_person_create("Adam", 1000);
+#-------------------------------------------------------------
+CALL sp_person_getAll();
+#-------------------------------------------------------------

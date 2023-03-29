@@ -1,0 +1,137 @@
+DROP TABLE IF EXISTS tbl_details;
+
+CREATE TABLE tbl_details (
+    id varchar(37),    
+    plan varchar(37) ,
+    task varchar(37),
+    responsible INT,
+    priority INT,
+    status INT,
+    start INT,
+    end INT,
+    resources varchar(37),
+    blockers varchar(37),
+    stakeholder INT,
+    milestone varchar(37),
+    notes varchar(37),
+
+  	PRIMARY KEY (id, plan),
+    FOREIGN KEY (responsible) REFERENCES tbl_people(id),
+    FOREIGN KEY (priority) REFERENCES tbl_priorities(id),
+    FOREIGN KEY (status) REFERENCES tbl_statuses(id),
+    FOREIGN KEY (stakeholder) REFERENCES tbl_people(id),
+    FOREIGN KEY (plan) REFERENCES tbl_plans(id)
+    
+);
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_details_create`(
+	IN _id varchar(37),
+	IN _task varchar(37),
+	IN _responsible INT,
+	IN _priority INT,
+	IN _status INT,
+	IN _start INT,
+	IN _end INT,
+	IN _resources varchar(37),
+	IN _blockers varchar(37),
+	IN _stakeholder INT,
+	IN _milestone varchar(37),
+	IN _notes varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_details (id , task ,responsible ,priority ,status ,start ,end ,resources ,blockers ,stakeholder ,milestone ,notes)
+   	VALUES (_id, _task, _responsible, _priority, _status, _start, _end, _resources, _blockers, _stakeholder, _milestone,_notes);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_delete;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_details_delete`(
+	IN _id varchar(37)
+)
+BEGIN
+	DELETE
+ 	FROM tbl_details
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_details_getAll`()
+BEGIN
+	SELECT id, task, responsible, priority, status, start, end, resources, blockers, stakeholder, milestone, notes
+ 	FROM tbl_details;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_getById ;
+DELIMITER //
+
+
+CREATE PROCEDURE `sp_details_getById`(
+	IN _id varchar(37)
+)
+BEGIN
+	SELECT id, task, responsible, priority, status, start, end, resources, blockers, stakeholder, milestone, notes
+ 	FROM tbl_details
+    WHERE id = _id;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_details_update;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_details_update`(
+	IN _id varchar(37),
+	IN _task varchar(37),
+	IN _responsible INT,
+	IN _priority INT,
+	IN _status INT,
+	IN _start INT,
+	IN _end INT,
+	IN _resources varchar(37),
+	IN _blockers varchar(37),
+	IN _stakeholder INT,
+	IN _milestone varchar(37),
+	IN _notes varchar(37)
+)
+BEGIN
+	UPDATE tbl_details
+	SET id = _id,
+	 task = _task,
+	 responsible = _responsible,
+	 priority = _priority,
+	 status = _status,
+	 start = _start,
+	 end = _end,
+	 resources = _resources,
+	 blockers = _blockers,
+	 stakeholder = _stakeholder,
+	 milestone = _milestone, 
+	 notes = _notes
+	WHERE id = _id;
+END//
+
+DELIMITER ;
