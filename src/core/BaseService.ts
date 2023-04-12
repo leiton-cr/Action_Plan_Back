@@ -11,7 +11,7 @@ export default class BaseService implements IBaseService {
   db: Database;
 
   constructor() {
-    this.db = new Database();
+    this.db = Database.getInstance();
   }
 
   async getAll() {
@@ -25,7 +25,7 @@ export default class BaseService implements IBaseService {
   }
 
   async delete(id: string) {
-    const result = await this.db.executeProcedure(this.PROCEDURES.DELETE, [id]);
+    let result = await this.db.executeProcedure(this.PROCEDURES.DELETE, [id]);
     return result;
   }
 

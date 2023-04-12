@@ -1,0 +1,47 @@
+@hostname = localhost 
+@port = 9000 
+@host = {{hostname}}:{{port}} 
+@version = v1
+@entity = plan 
+@contentType = application/json
+
+### 
+GET http://{{host}}/api/{{version}}/{{entity}} HTTP/1.1
+
+### 
+GET http://{{host}}/api/{{version}}/{{entity}}/3b08b6d9-fc2b-4e6e-8061-7f666f7c404c HTTP/1.1
+
+### 
+POST http://{{host}}/api/{{version}}/{{entity}} HTTP/1.1
+content-type: {{contentType}}
+
+{
+    "data": {
+        "plan": {
+            "id": "3b08b6d9-fc2b-4e6e-8061-7f666f7c404c",
+            "company": 1000,
+            "project": "Mastery",
+            "manager": 10000,
+            "goal": "Win",
+            "issue": "Money",
+            "outcome": "Exit",
+            "updateAt": null
+        },
+        "details": [
+            {
+            "id": "3b08b6d9-fc2b-4e6e-8061-7f666f7c4041",
+            "task": "Make Money",
+            "responsible": 10001,
+            "priority": 1001,
+            "status": 1001,
+            "start": "2023-03-27T06:00:00.000Z",
+            "end": "2023-03-27T06:00:00.000Z",
+            "resources": "No resources",
+            "blockers": "No blockers",
+            "stakeholder": 10001,
+            "milestone": "Be alive",
+            "notes": "None"
+            }
+        ]
+  }
+}

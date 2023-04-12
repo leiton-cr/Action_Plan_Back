@@ -1,5 +1,6 @@
 export interface DetailModel{
     id: string
+    plan: string
     task: string
     responsible: string
     priority: string

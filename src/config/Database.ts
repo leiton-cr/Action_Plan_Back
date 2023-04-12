@@ -2,12 +2,16 @@ import mysql2, { Pool } from "mysql2";
 import { DatabaseResult } from "../models/DatabaseResult";
 
 export default class Database {
+
+  private static instance: Database = null
+
   /**
    * Database connection
    */
   private connection: Pool;
 
-  constructor() {
+  private constructor() {
+    console.log("Create database");
     this.connection = mysql2.createPool({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -15,6 +19,15 @@ export default class Database {
       database: process.env.DB_DATABASE,
     });
   }
+
+  public static getInstance() {
+    if (!Database.instance) {
+      Database.instance = new Database()
+    }
+
+    return Database.instance
+  }
+
 
   /**
    * This method create returns the configured connection
@@ -36,7 +49,7 @@ export default class Database {
       .query(`CALL ${procedure}`, params)
       .then((data: any) => {
         const info = this.processResult(data)
-        return  info ;
+        return info;
       })
       .catch((err) => {
         console.log(err.sqlMessage);
@@ -44,13 +57,20 @@ export default class Database {
       });
   }
 
-  private processResult(data){
+  private processResult(data) {
+    let one = undefined;
+    let all = [];
+    let affected = false
 
-    const result: DatabaseResult<any> = {
-      one: data[0][0][0],
-      all: data[0][0],
-      affected: data[0][1].affectedRows > 0
+    if (("affectedRows" in data[0])) {
+      affected = data[0].affectedRows > 0
+    } else {
+      one = data[0][0][0]
+      all = data[0][0]
+      affected = data[0][1].affectedRows > 0
     }
+
+    const result: DatabaseResult<any> = { one, all, affected }
 
     return result
   }

@@ -4,7 +4,6 @@ import express, { Application } from "express";
 import cors from "cors";
 import morgan from "morgan";
 
-import TestRouter from "../routes/v1/TestRouter";
 import swaggerDocs from "../routes/swagger";
 import PlanRouter from "../routes/v1/PlanRouter";
 import BaseRouter from "../core/BaseRouter";
@@ -21,7 +20,6 @@ export default class Server {
         this.middlewares();
 
         this.routers = [
-            new TestRouter(),
             new PlanRouter()
         ]
 

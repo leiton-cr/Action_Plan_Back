@@ -1,3 +1,49 @@
+DROP TABLE IF EXISTS tbl_statuses;
+
+CREATE TABLE tbl_statuses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    status varchar(20) UNIQUE NOT NULL
+) AUTO_INCREMENT=1000;
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_statuses_create;
+
+DELIMITER //
+CREATE PROCEDURE `sp_statuses_create`(
+	IN _status varchar(37)
+)
+BEGIN
+	INSERT INTO tbl_statuses (status) 
+    VALUES (_status);
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_statuses_getAll;
+DELIMITER //
+
+CREATE PROCEDURE `sp_statuses_getAll`()
+BEGIN
+	SELECT id, status
+ 	FROM tbl_statuses;
+END//
+
+DELIMITER ;
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+CALL sp_statuses_create("To do");
+CALL sp_statuses_create("In process");
+CALL sp_statuses_create("Blocked");
+CALL sp_statuses_create("Done");
+#-------------------------------------------------------------
+CALL sp_statuses_getAll();
+#-------------------------------------------------------------
+
+
 DROP TABLE IF EXISTS tbl_companies;
 
 CREATE TABLE tbl_companies (
@@ -187,6 +233,22 @@ CALL sp_person_create("James", 1001);
 CALL sp_person_create("Jhon", 1002);
 CALL sp_person_create("Joe", 1000);
 CALL sp_person_create("Adam", 1000);
+
+CALL sp_person_create("Carles", 1001);
+CALL sp_person_create("Stefany", 1002);
+CALL sp_person_create("Amalia", 1000);
+CALL sp_person_create("Briene", 1000);
+
+CALL sp_person_create("Pablo", 1001);
+CALL sp_person_create("Ana", 1002);
+CALL sp_person_create("Maria", 1000);
+CALL sp_person_create("Felix", 1000);
+
+CALL sp_person_create("Felicia", 1001);
+CALL sp_person_create("Yang", 1002);
+CALL sp_person_create("Grey", 1000);
+CALL sp_person_create("Cooper", 1000);
+
 #-------------------------------------------------------------
 CALL sp_person_getAll();
 #-------------------------------------------------------------
@@ -201,6 +263,7 @@ CREATE TABLE tbl_plans (
     goal TEXT,
     issue TEXT,
     outcome TEXT,
+    updateAt DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (company) REFERENCES tbl_companies(id),
     FOREIGN KEY (manager) REFERENCES tbl_people(id)
 );
@@ -250,7 +313,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_plans_getAll`()
 BEGIN
-	SELECT id, status
+	SELECT id, project, manager, company, updateAt
  	FROM tbl_plans;
 END//
 
@@ -266,7 +329,7 @@ CREATE PROCEDURE `sp_plans_getById`(
 	IN _id varchar(37)
 )
 BEGIN
-	SELECT id, status
+	SELECT id, company, project, manager, goal, issue, outcome, updateAt
  	FROM tbl_plans
     WHERE id = _id;
 END//
@@ -312,20 +375,20 @@ CREATE TABLE tbl_details (
     responsible INT,
     priority INT,
     status INT,
-    start INT,
-    end INT,
+    start DATE,
+    end DATE,
     resources varchar(37),
     blockers varchar(37),
     stakeholder INT,
     milestone varchar(37),
     notes varchar(37),
 
-  	PRIMARY KEY (id, plan),
+    PRIMARY KEY (id, plan),
     FOREIGN KEY (responsible) REFERENCES tbl_people(id),
     FOREIGN KEY (priority) REFERENCES tbl_priorities(id),
     FOREIGN KEY (status) REFERENCES tbl_statuses(id),
     FOREIGN KEY (stakeholder) REFERENCES tbl_people(id),
-    FOREIGN KEY (plan) REFERENCES tbl_plans(id)
+    FOREIGN KEY (plan) REFERENCES tbl_plans(id) ON DELETE CASCADE  
     
 );
 
@@ -339,17 +402,18 @@ CREATE PROCEDURE `sp_details_create`(
 	IN _responsible INT,
 	IN _priority INT,
 	IN _status INT,
-	IN _start INT,
-	IN _end INT,
+	IN _start DATE,
+	IN _end DATE,
 	IN _resources varchar(37),
 	IN _blockers varchar(37),
 	IN _stakeholder INT,
 	IN _milestone varchar(37),
-	IN _notes varchar(37)
+	IN _notes varchar(37),
+	IN _plan varchar(37)
 )
 BEGIN
-	INSERT INTO tbl_details (id , task ,responsible ,priority ,status ,start ,end ,resources ,blockers ,stakeholder ,milestone ,notes)
-   	VALUES (_id, _task, _responsible, _priority, _status, _start, _end, _resources, _blockers, _stakeholder, _milestone,_notes);
+	INSERT INTO tbl_details (id, plan , task ,responsible ,priority ,status ,start ,end ,resources ,blockers ,stakeholder ,milestone ,notes)
+   	VALUES (_id, _plan, _task, _responsible, _priority, _status, _start, _end, _resources, _blockers, _stakeholder, _milestone,_notes);
 END//
 
 DELIMITER ;
@@ -362,42 +426,29 @@ DROP PROCEDURE IF EXISTS sp_details_delete;
 DELIMITER //
 
 CREATE PROCEDURE `sp_details_delete`(
-	IN _id varchar(37)
+	IN _plan varchar(37)
 )
 BEGIN
 	DELETE
  	FROM tbl_details
-    WHERE id = _id;
+    WHERE plan = _plan;
 END//
 
 DELIMITER ;
 #-------------------------------------------------------------
 
 #-------------------------------------------------------------
-DROP PROCEDURE IF EXISTS sp_details_getAll;
-DELIMITER //
-
-CREATE PROCEDURE `sp_details_getAll`()
-BEGIN
-	SELECT id, task, responsible, priority, status, start, end, resources, blockers, stakeholder, milestone, notes
- 	FROM tbl_details;
-END//
-
-DELIMITER ;
-#-------------------------------------------------------------
-
-#-------------------------------------------------------------
-DROP PROCEDURE IF EXISTS sp_details_getById ;
+DROP PROCEDURE IF EXISTS sp_details_getByPlan ;
 DELIMITER //
 
 
-CREATE PROCEDURE `sp_details_getById`(
-	IN _id varchar(37)
+CREATE PROCEDURE `sp_details_getByPlan`(
+	IN _plan varchar(37)
 )
 BEGIN
 	SELECT id, task, responsible, priority, status, start, end, resources, blockers, stakeholder, milestone, notes
  	FROM tbl_details
-    WHERE id = _id;
+    WHERE plan = _plan;
 END//
 
 DELIMITER ;
@@ -414,8 +465,8 @@ CREATE PROCEDURE `sp_details_update`(
 	IN _responsible INT,
 	IN _priority INT,
 	IN _status INT,
-	IN _start INT,
-	IN _end INT,
+	IN _start DATE,
+	IN _end DATE,
 	IN _resources varchar(37),
 	IN _blockers varchar(37),
 	IN _stakeholder INT,
@@ -445,7 +496,7 @@ DELIMITER ;
 
 
 
-
+CALL db.sp_plans_create('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c', 1000,'Mastery', 10000,'Win','Money','Exit');
 
 
 
@@ -551,5 +602,34 @@ CALL sp_tests_getByID('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c');
 CALL sp_tests_update('3b08b6d9-fc2b-4e6e-8061-7f666f7c404c', "To-Do");
 #-------------------------------------------------------------
 CALL sp_tests_delete("3b08b6d9-fc2b-4e6e-8061-7f666f7c404c");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

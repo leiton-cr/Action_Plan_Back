@@ -1,6 +1,7 @@
 import Database from "../config/Database";
 
 export interface IBaseService {
+    [x: string]: any;
     PROCEDURES: {
         GET_ALL: string,
         GET_BY_ID: string,
@@ -14,5 +15,5 @@ export interface IBaseService {
     getAll: Function;
     getById: Function;
     delete: Function;
-
+   
 }

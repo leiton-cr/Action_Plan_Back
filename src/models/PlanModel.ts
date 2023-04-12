@@ -1,4 +1,4 @@
-import { PlanDetail } from "./DetailModel"
+import { DetailModel } from "./DetailModel"
 
 export interface PlanModel {
     id: string
@@ -8,6 +8,6 @@ export interface PlanModel {
     outcome?: string
     goal?: string
     issue?: string
-    details?: Array<PlanDetail>
+    details?: Array<DetailModel>
     updatedAt: string
 }

@@ -23,6 +23,7 @@ export default class PlanController extends BaseController<PlanModel> {
     const result: DatabaseResult<PlanModel> = await this.service.getById(id)
     const plan = result.one;
 
+  
     const detailsResult: DatabaseResult<DetailModel> = await this.detailService.getByPlan(id)
     const details = detailsResult.all
 
@@ -32,5 +33,39 @@ export default class PlanController extends BaseController<PlanModel> {
     
     res.status(200).json({data: {plan: plan, details: details}});
   };
+
+  create:any = async (req: Request, res: Response) => {
+
+    const plan:PlanModel = {
+      ...req.body.data.plan
+    };
+
+    console.log(req.body);
+    
+
+    const details: Array<DetailModel> = req.body.data.details.map(detail => {detail.plan = plan.id; return detail})
+   
+    const resultPlan: DatabaseResult<PlanModel> = await this.service.create(plan)
+    const resultDetails: Array<DatabaseResult<DetailModel>> = await this.detailService.create(details)
+
+   
+    return res.json({})    
+  }
+
+  update:any = async (req: Request, res: Response) => {
+
+    const plan:PlanModel = {
+      ...req.body.data.plan
+    };
+
+    let details: Array<DetailModel> = req.body.data.details.map(detail => {detail.plan = plan.id; return detail})
+
+    const deleteResult = await this.detailService.delete(plan.id)
+
+    const resultPlan: DatabaseResult<PlanModel> = await this.service.update(plan)
+    const resultDetails: Array<DatabaseResult<DetailModel>> = await this.detailService.create(details)
+
+    return res.json({})
+  }
 
 }
